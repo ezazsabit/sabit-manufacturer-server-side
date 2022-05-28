@@ -38,11 +38,29 @@ async function run() {
             const cursor = await toolCollection.findOne(query)
             res.send(cursor)
         });
+        //for showinf ordered item----------------
         app.post("/ordereditem", async (req, res) => {
            
            const doc=req.body;
            const result = await totalOrder.insertOne(doc);
           
+            res.send(result)
+        });
+        app.get("/ordereditem", async (req, res) => {
+            // console.log('inside inventory')
+            const query = {}
+            const cursor = totalOrder.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        app.get("/ordereditem/:email", async (req, res) => {
+            // console.log(req);
+            const email = req.params.email
+            console.log()
+            // console.log(id)
+            const query = { email:email }
+            const cursor = await totalOrder.find(query)
+            const result = await cursor.toArray()
             res.send(result)
         });
 
