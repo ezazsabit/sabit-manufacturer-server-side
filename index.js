@@ -84,6 +84,13 @@ async function run() {
            
              res.send(result)
          });
+         app.get("/review", async (req, res) => {
+            // console.log('inside inventory')
+            const query = {}
+            const cursor = totalReviews.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
     }
     finally{
 
