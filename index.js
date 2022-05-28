@@ -21,6 +21,7 @@ async function run() {
         await client.connect()
         const toolCollection = client.db("Sabitmanufacturer").collection('Tools');
         const totalOrder = client.db("Sabitmanufacturer").collection('total-order')
+        const totalReviews = client.db("Sabitmanufacturer").collection('total-review')
         // -------------------------------------------------------------------------------
         app.get("/tools", async (req, res) => {
             // console.log('inside inventory')
@@ -75,7 +76,14 @@ async function run() {
           
            res.send(cursor)
         });
-
+         //------------------store reviews in db
+         app.post("/review", async (req, res) => {
+            console.log('ashche');
+            const doc=req.body;
+            const result = await totalReviews.insertOne(doc);
+           
+             res.send(result)
+         });
     }
     finally{
 
