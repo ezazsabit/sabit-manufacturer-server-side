@@ -19,7 +19,7 @@ async function run() {
     try {
         console.log('try')
         await client.connect()
-        const toolCollection = client.db("Sabitmanufacturer").collection('Tools')
+        const toolCollection = client.db("Sabitmanufacturer").collection('Tools');
         const totalOrder = client.db("Sabitmanufacturer").collection('total-order')
         // -------------------------------------------------------------------------------
         app.get("/tools", async (req, res) => {
@@ -62,6 +62,18 @@ async function run() {
             const cursor = await totalOrder.find(query)
             const result = await cursor.toArray()
             res.send(result)
+        });
+        //--------delete a item---------------------------------------
+
+        app.delete("/ordereditem/:id", async (req, res) => {
+            
+           const doc=req.params.id;
+           console.log(doc);
+           const query = {_id:ObjectId(`${doc}`)};
+           console.log(query)
+          const cursor =await totalOrder.deleteOne(query);
+          
+           res.send(cursor)
         });
 
     }
