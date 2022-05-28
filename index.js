@@ -20,6 +20,7 @@ async function run() {
         console.log('try')
         await client.connect()
         const toolCollection = client.db("Sabitmanufacturer").collection('Tools')
+        const totalOrder = client.db("Sabitmanufacturer").collection('total-order')
         // -------------------------------------------------------------------------------
         app.get("/tools", async (req, res) => {
             // console.log('inside inventory')
@@ -36,6 +37,13 @@ async function run() {
             const query = { _id:id }
             const cursor = await toolCollection.findOne(query)
             res.send(cursor)
+        });
+        app.post("/ordereditem", async (req, res) => {
+           
+           const doc=req.body;
+           const result = await totalOrder.insertOne(doc);
+          
+            res.send(result)
         });
 
     }
