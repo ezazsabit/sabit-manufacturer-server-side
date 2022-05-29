@@ -22,6 +22,7 @@ async function run() {
         const toolCollection = client.db("Sabitmanufacturer").collection('Tools');
         const totalOrder = client.db("Sabitmanufacturer").collection('total-order')
         const totalReviews = client.db("Sabitmanufacturer").collection('total-review')
+        const userCollection = client.db("Sabitmanufacturer").collection("user")
         // -------------------------------------------------------------------------------
         app.get("/tools", async (req, res) => {
             // console.log('inside inventory')
@@ -35,16 +36,16 @@ async function run() {
             // console.log(req);
             const id = req.params.id
             // console.log(id)
-            const query = { _id:id }
+            const query = { _id: id }
             const cursor = await toolCollection.findOne(query)
             res.send(cursor)
         });
         //for showinf ordered item----------------
         app.post("/ordereditem", async (req, res) => {
-           
-           const doc=req.body;
-           const result = await totalOrder.insertOne(doc);
-          
+
+            const doc = req.body;
+            const result = await totalOrder.insertOne(doc);
+
             res.send(result)
         });
         app.get("/ordereditem", async (req, res) => {
@@ -54,12 +55,18 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.post("/tools", async (req, res) => {
+            // console.log('inside inventory')
+            const query = req.body
+            const cursor = await toolCollection.insertOne(query)
+
+        })
         app.get("/ordereditem/:email", async (req, res) => {
             // console.log(req);
             const email = req.params.email
             console.log()
             // console.log(id)
-            const query = { email:email }
+            const query = { email: email }
             const cursor = await totalOrder.find(query)
             const result = await cursor.toArray()
             res.send(result)
@@ -67,32 +74,82 @@ async function run() {
         //--------delete a item---------------------------------------
 
         app.delete("/ordereditem/:id", async (req, res) => {
-            
-           const doc=req.params.id;
-           console.log(doc);
-           const query = {_id:ObjectId(`${doc}`)};
-           console.log(query)
-          const cursor =await totalOrder.deleteOne(query);
-          
-           res.send(cursor)
+
+            const doc = req.params.id;
+            console.log(doc);
+            const query = { _id: ObjectId(`${doc}`) };
+            console.log(query)
+            const cursor = await totalOrder.deleteOne(query);
+
+            res.send(cursor)
         });
-         //------------------store reviews in db
-         app.post("/review", async (req, res) => {
+        //------------------store reviews in db
+        app.post("/review", async (req, res) => {
             console.log('ashche');
-            const doc=req.body;
+            const doc = req.body;
             const result = await totalReviews.insertOne(doc);
-           
-             res.send(result)
-         });
-         app.get("/review", async (req, res) => {
+
+            res.send(result)
+        });
+        app.get("/review", async (req, res) => {
             // console.log('inside inventory')
             const query = {}
             const cursor = totalReviews.find(query)
             const result = await cursor.toArray()
             res.send(result)
         })
+        //-----------------user handle for admin section
+        app.post("/user", async (req, res) => {
+            const user = req.body
+            const result = await userCollection.insertOne(user);
+
+            res.send(result)
+        })
+        app.get("/user", async (req, res) => {
+            const email = req.query
+            const result = await userCollection.findOne(email)
+            res.send(result)
+        })
+        // app.get("/user/profile", async (req, res) => {
+        //     const email = {}
+        //     const result = userCollection.find(email)
+        //     const cursor = await result.toArray()
+        //     res.send(cursor)
+        // })
+        app.put("/user", async (req, res) => {
+            const email2 = req.query
+            const data = req.body
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: data
+            };
+            const result = await userCollection.updateOne(email2, updateDoc, options);
+        })
+        app.delete("/tools/:id", async (req, res) => {
+
+            const doc = req.params.id;
+            console.log(doc);
+            const query = { _id: ObjectId(`${doc}`) };
+            console.log(query)
+            const cursor = await totalOrder.deleteOne(query);
+
+            // res.send(cursor,cur)
+        });
+        // app.put('/user/profile', async (req, res) => {
+        //     const email = req.query
+        //     console.log(email)
+        //     const data = req.body
+        //     const updateDoc = {
+        //         $set: {
+        //             role: "admin"
+        //         }
+        //     };
+        //     const result = await profileColletions.updateOne(email, updateDoc)
+        //     res.send(result)
+        // })
+
     }
-    finally{
+    finally {
 
     }
 
@@ -103,4 +160,4 @@ run().catch(console.dir)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
-  });   
+});   
